@@ -2,10 +2,15 @@ package in.codingage.FoodOrdering.service.impl;
 
 import in.codingage.FoodOrdering.model.FoodItem;
 import in.codingage.FoodOrdering.model.Order;
+import in.codingage.FoodOrdering.model.Restaurant;
+import in.codingage.FoodOrdering.model.User;
 import in.codingage.FoodOrdering.model.request.order.CreateOrder;
 import in.codingage.FoodOrdering.model.request.order.UpdateOrderStatus;
 import in.codingage.FoodOrdering.repository.OrderRepository;
+import in.codingage.FoodOrdering.service.FoodItemService;
 import in.codingage.FoodOrdering.service.OrderService;
+import in.codingage.FoodOrdering.service.RestaurantService;
+import in.codingage.FoodOrdering.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +23,11 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     OrderRepository orderRepository;
     @Autowired
-    FoodItemServiceImpl foodItemService;
+    FoodItemService foodItemService;
+    @Autowired
+    RestaurantService restaurantService;
+    @Autowired
+    UserService userService;
 
     @Override
     public Optional<Order> getOrderById(Integer orderId) {
@@ -37,23 +46,21 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order createOrder(CreateOrder createOrder) {
-        Order order = new Order();
-        order.setStatus("In_progress");
-        order.setCustomerId(createOrder.getCustomerId());
-        order.setRestaurantId(createOrder.getRestaurantId());
-        double d=0;
-        for (FoodItem foodItem : foodItemService.getAll()) {
-            if (foodItem.getId().equals(createOrder.getFoodItemId())) {
-                List<FoodItem> foodItems = new ArrayList<>();
-                foodItems.add(foodItem);
-                d+=foodItem.getPrice();
-                order.setFoodItems(foodItems);
+        Restaurant restaurant = restaurantService.getRestaurantById(createOrder.getRestaurantId());
+        Optional<User> user = userService.getById(createOrder.getCustomerId());
+        if (restaurant != null && user.isPresent() && user.get().getRole().equalsIgnoreCase("customer"))
+            for (FoodItem foodItem : restaurant.getFoodItemList()) {
+                if (foodItem.getId().equals(createOrder.getFoodItemId())) {
+                    Order order = new Order();
+                    order.setRestaurantId(createOrder.getRestaurantId());
+                    order.setCustomerId(createOrder.getCustomerId());
+                    order.setFoodItem(createOrder.getFoodItemId());
+                    order.setTotalPrice(foodItem.getPrice());
+                    order.setStatus("In_progress");
+                    return orderRepository.save(order);
+                }
             }
-        }
-
-        order.setTotalPrice(d);
-        orderRepository.save(order);
-        return order;
+        return new Order();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package in.codingage.FoodOrdering.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,8 +19,10 @@ public class FoodItem {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;
-
-    private Integer restaurantId=8;
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id")
+    @JsonIgnore
+    private Restaurant restaurant;
     private String name;
     private String description;
     private double price;

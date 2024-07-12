@@ -1,5 +1,6 @@
 package in.codingage.FoodOrdering.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,6 +24,8 @@ public class Restaurant {
     private String name;
     private String address;
     private String phone;
-    @ElementCollection
-    private List<FoodItem> foodItemList=new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "restaurant_id")
+    @JsonManagedReference
+    private List<FoodItem> foodItemList = new ArrayList<>();
 }
