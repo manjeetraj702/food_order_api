@@ -26,12 +26,12 @@ public class FoodItemServiceImpl implements FoodItemService {
         if(restaurant !=null && restaurant.getOwnerId().equals(addFoodItem.getOwnerId()))
         {
         foodItem.setName(addFoodItem.getName());
-        foodItem.setRestaurantId(addFoodItem.getRestaurantId());
+        foodItem.setRestaurant(restaurant);
         foodItem.setPrice(addFoodItem.getPrice());
         foodItem.setDescription(addFoodItem.getDescription());
-        FoodItem foodItem1=foodItemRepository.save(foodItem);
-        restaurant.getFoodItemList().add(foodItem1);
-        return foodItem1;
+        restaurant.getFoodItemList().add(foodItem);
+        foodItemRepository.save(foodItem);
+
         }
 
         return foodItem;
@@ -43,7 +43,7 @@ public class FoodItemServiceImpl implements FoodItemService {
         Restaurant restaurant = restaurantService.getRestaurantById(updateFoodItem.getRestaurantId());
         if (restaurant != null && restaurant.getOwnerId().equals(updateFoodItem.getOwnerId()) && foodItem.isPresent()) {
             foodItem.get().setName(updateFoodItem.getName());
-            foodItem.get().setRestaurantId(updateFoodItem.getRestaurantId());
+            foodItem.get().setRestaurant(restaurant);
             foodItem.get().setPrice(updateFoodItem.getPrice());
             foodItem.get().setDescription(updateFoodItem.getDescription());
             return foodItem;
@@ -54,5 +54,10 @@ public class FoodItemServiceImpl implements FoodItemService {
     @Override
     public List<FoodItem> getAll() {
         return foodItemRepository.findAll();
+    }
+
+    @Override
+    public Optional<FoodItem> getFoodItemById(Integer foodItemId) {
+        return foodItemRepository.findById(foodItemId);
     }
 }
