@@ -27,7 +27,9 @@ public class UserServiceImpl implements UserService {
             user.setEmail(userSignUp.getEmail());
             return userRepository.save(user);
         }
-        return new User();
+        else {
+            return new User();
+        }
     }
 
     @Override

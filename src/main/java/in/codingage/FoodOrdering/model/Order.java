@@ -24,10 +24,9 @@ public class Order {
     private Integer customerId;
 
     private Integer restaurantId;
-//
-//  @OneToMany(mappedBy = "order",cascade = CascadeType.ALL,orphanRemoval = true)
-//  @JsonManagedReference
-    private  Integer foodItem;
+    @ManyToOne
+    @JoinColumn(name = "food_item_id")
+    private  FoodItem foodItem;
     private double totalPrice;
     private String status;
 }

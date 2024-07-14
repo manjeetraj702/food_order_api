@@ -54,7 +54,7 @@ public class OrderServiceImpl implements OrderService {
                     Order order = new Order();
                     order.setRestaurantId(createOrder.getRestaurantId());
                     order.setCustomerId(createOrder.getCustomerId());
-                    order.setFoodItem(createOrder.getFoodItemId());
+                    order.setFoodItem(foodItem);
                     order.setTotalPrice(foodItem.getPrice());
                     order.setStatus("In_progress");
                     return orderRepository.save(order);
