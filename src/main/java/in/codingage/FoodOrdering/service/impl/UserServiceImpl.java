@@ -1,5 +1,6 @@
 package in.codingage.FoodOrdering.service.impl;
 
+import in.codingage.FoodOrdering.Validator;
 import in.codingage.FoodOrdering.model.User;
 import in.codingage.FoodOrdering.model.request.user.UserSignIn;
 import in.codingage.FoodOrdering.model.request.user.UserSignUp;
@@ -18,6 +19,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User signUp(UserSignUp userSignUp) {
+        if(!Validator.isValidEmail(userSignUp.getEmail()))
+        {
+            return new User();
+        }
+        if(!Validator.isValidPassword(userSignUp.getPassword()))
+        {
+            return new User();
+        }
         User userCheck = userRepository.findByUserName(userSignUp.getUserName());
         if (userCheck == null) {
             User user = new User();
@@ -26,15 +35,17 @@ public class UserServiceImpl implements UserService {
             user.setPassword(userSignUp.getPassword());
             user.setEmail(userSignUp.getEmail());
             return userRepository.save(user);
-        }
-        else {
+        } else {
             return new User();
         }
     }
 
     @Override
     public User signIn(UserSignIn userSignIn) {
-
+        if(!Validator.isValidPassword(userSignIn.getPassword()))
+        {
+            return new User();
+        }
         User user = userRepository.findByUserName(userSignIn.getUserName());
         if (user != null && user.getPassword().equals(userSignIn.getPassword())) {
             return user;
@@ -51,10 +62,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> getById(Integer userId) {
-        return userRepository.findById(userId);
-    }
-
-    public Optional<User> getUserById(Integer userId) {
         return userRepository.findById(userId);
     }
 }

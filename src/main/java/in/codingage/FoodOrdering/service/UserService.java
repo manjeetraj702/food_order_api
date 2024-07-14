@@ -13,5 +13,6 @@ public interface UserService {
     User signIn(UserSignIn userSignIn);
 
     List<User> getAllUser();
+
     Optional<User> getById(Integer userId);
 }

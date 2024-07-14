@@ -15,22 +15,27 @@ public class OrderController {
 
     @Autowired
     OrderService orderService;
+
     @PostMapping("/placeOrder")
     public Order placeOrder(@RequestBody CreateOrder createOrder) {
         return orderService.createOrder(createOrder);
     }
+
     @GetMapping("/getOrderById")
     Optional<Order> getOrderById(@RequestParam Integer orderId) {
         return orderService.getOrderById(orderId);
     }
+
     @GetMapping("/getOrderByCustomerId")
     Optional<Order> getOrderByCustomerId(@RequestParam Integer customerId) {
         return orderService.getOrderByCustomerId(customerId);
     }
+
     @GetMapping("/getOrderByRestaurantId")
     Optional<Order> getOrderByRestaurantId(@RequestParam Integer restaurantId) {
         return orderService.getOrderByRestaurantId(restaurantId);
     }
+
     @PutMapping("/updateOrder")
     Order updateOrder(@RequestBody UpdateOrderStatus updateOrderStatus) {
         return orderService.updateOrder(updateOrderStatus);

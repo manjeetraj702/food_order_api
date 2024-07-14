@@ -3,6 +3,7 @@ package in.codingage.FoodOrdering.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,13 +21,13 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;
-
+    @NotNull
     private Integer customerId;
-
+    @NotNull
     private Integer restaurantId;
     @ManyToOne
     @JoinColumn(name = "food_item_id")
-    private  FoodItem foodItem;
+    private FoodItem foodItem;
     private double totalPrice;
     private String status;
 }

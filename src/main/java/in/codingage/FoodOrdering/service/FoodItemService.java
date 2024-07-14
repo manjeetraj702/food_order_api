@@ -12,7 +12,9 @@ public interface FoodItemService {
 
     Optional<FoodItem> updateFoodItem(UpdateFoodItem updateFoodItem);
 
-    List<FoodItem> getAll();
+    List<FoodItem> getAllFoodItem();
 
     Optional<FoodItem> getFoodItemById(Integer foodItem);
+
+    List<FoodItem> getFoodItemByRestaurantId(Integer restaurantId);
 }

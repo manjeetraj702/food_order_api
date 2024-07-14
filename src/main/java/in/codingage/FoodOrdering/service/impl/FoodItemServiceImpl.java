@@ -6,6 +6,7 @@ import in.codingage.FoodOrdering.model.request.fooditem.AddFoodItem;
 import in.codingage.FoodOrdering.model.request.fooditem.UpdateFoodItem;
 import in.codingage.FoodOrdering.repository.FoodItemRepository;
 import in.codingage.FoodOrdering.service.FoodItemService;
+import in.codingage.FoodOrdering.service.RestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,22 +16,26 @@ import java.util.Optional;
 @Service
 public class FoodItemServiceImpl implements FoodItemService {
     @Autowired
-    RestaurantServiceImpl restaurantService;
+    RestaurantService restaurantService;
     @Autowired
     FoodItemRepository foodItemRepository;
 
     @Override
     public FoodItem addFoodItem(AddFoodItem addFoodItem) {
         FoodItem foodItem = new FoodItem();
-        Restaurant restaurant=restaurantService.getRestaurantById(addFoodItem.getRestaurantId());
-        if(restaurant !=null && restaurant.getOwnerId().equals(addFoodItem.getOwnerId()))
-        {
-        foodItem.setName(addFoodItem.getName());
-        foodItem.setRestaurant(restaurant);
-        foodItem.setPrice(addFoodItem.getPrice());
-        foodItem.setDescription(addFoodItem.getDescription());
-        restaurant.getFoodItemList().add(foodItem);
-        foodItemRepository.save(foodItem);
+        Restaurant restaurant = restaurantService.getRestaurantById(addFoodItem.getRestaurantId());
+        if (restaurant != null && restaurant.getOwnerId().equals(addFoodItem.getOwnerId())) {
+            for (FoodItem foodItem1 : restaurant.getFoodItemList()) {
+                if (foodItem1.getName().equalsIgnoreCase(addFoodItem.getName())) {
+                    return foodItem;
+                }
+            }
+            foodItem.setName(addFoodItem.getName());
+            foodItem.setRestaurant(restaurant);
+            foodItem.setPrice(addFoodItem.getPrice());
+            foodItem.setDescription(addFoodItem.getDescription());
+            restaurant.getFoodItemList().add(foodItem);
+            foodItemRepository.save(foodItem);
 
         }
 
@@ -52,8 +57,14 @@ public class FoodItemServiceImpl implements FoodItemService {
     }
 
     @Override
-    public List<FoodItem> getAll() {
+    public List<FoodItem> getAllFoodItem() {
         return foodItemRepository.findAll();
+    }
+
+    @Override
+    public List<FoodItem> getFoodItemByRestaurantId(Integer restaurantId)
+    {
+        return foodItemRepository.findByRestaurantId(restaurantId);
     }
 
     @Override

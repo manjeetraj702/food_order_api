@@ -1,11 +1,13 @@
 package in.codingage.FoodOrdering.service.impl;
 
+import in.codingage.FoodOrdering.Validator;
 import in.codingage.FoodOrdering.model.Restaurant;
 import in.codingage.FoodOrdering.model.User;
 import in.codingage.FoodOrdering.model.request.restaurant.RestaurantCreate;
 import in.codingage.FoodOrdering.model.request.restaurant.RestaurantUpdate;
 import in.codingage.FoodOrdering.repository.RestaurantRepository;
 import in.codingage.FoodOrdering.service.RestaurantService;
+import in.codingage.FoodOrdering.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,13 +18,17 @@ import java.util.Optional;
 @Service
 public class RestaurantServiceImpl implements RestaurantService {
     @Autowired
-    private UserServiceImpl userService;
+    private UserService userService;
     @Autowired
     private RestaurantRepository restaurantRepository;
 
     @Override
     public Restaurant createRestaurant(RestaurantCreate restaurantCreate) {
-        Optional<User> user=userService.getUserById(restaurantCreate.getOwnerId());
+        if(!Validator.isValidPhoneNumber(restaurantCreate.getPhone()))
+        {
+            return new Restaurant();
+        }
+        Optional<User> user=userService.getById(restaurantCreate.getOwnerId());
         if(user.isPresent() && user.get().getRole().equalsIgnoreCase("owner")) {
             if ((restaurantRepository.findByPhone(restaurantCreate.getPhone())) == null) {
                 Restaurant restaurant = new Restaurant();
@@ -66,7 +72,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public List<Restaurant> getRestaurantsByOwnerId(Integer ownerId, String password) {
-        Optional<User> user = userService.getUserById(ownerId);
+        Optional<User> user = userService.getById(ownerId);
         if (user.isPresent() && user.get().getPassword().equals(password)) {
             return restaurantRepository.findRestaurantByOwnerId(ownerId);
         }
